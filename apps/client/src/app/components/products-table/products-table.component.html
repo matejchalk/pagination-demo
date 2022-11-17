@@ -1,0 +1,50 @@
+<nz-table
+  #productsTable
+  *ngIf="productsList$ | async as list"
+  [nzBordered]="true"
+  [nzFrontPagination]="false"
+  [nzLoading]="loading$ | async"
+  [nzData]="list?.items ?? []"
+  [nzTotal]="list?.total ?? 0"
+  [nzPageIndex]="list?.page ?? 1"
+  [nzPageSize]="list?.pageSize ?? defaultPageSize"
+  (nzQueryParams)="handleTableParamsChange($event)"
+>
+  <thead>
+    <tr>
+      <th
+        *ngFor="let column of columns"
+        [nzSortFn]="true"
+        [nzColumnKey]="column.key"
+        [nzSortOrder]="
+          list?.orderBy === column.key
+            ? list?.orderDir === 'asc'
+              ? 'ascend'
+              : 'descend'
+            : null
+        "
+        [nzSortDirections]="['descend', 'ascend']"
+      >
+        {{ column.label }}
+      </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of productsTable.data">
+      <td>
+        <img
+          [src]="product.imageUrl + '?id=' + product.id"
+          height="72"
+          width="96"
+        />
+        {{ product.name }}
+      </td>
+      <td nzAlign="right">{{ product.price | currency }}</td>
+      <td nzAlign="center">{{ product.rating }}</td>
+      <td>
+        <button nz-button [nzType]="'primary'">See reviews</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>

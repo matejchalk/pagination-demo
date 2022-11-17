@@ -19,11 +19,13 @@
     "@angular/platform-browser": "~14.2.0",
     "@angular/platform-browser-dynamic": "~14.2.0",
     "@angular/router": "~14.2.0",
+    "@fastify/cors": "^8.2.0",
     "@nrwl/angular": "15.1.1",
     "@sinclair/typebox": "^0.25.8",
     "dotenv": "^16.0.3",
     "fastify": "^4.10.0",
     "mongodb": "^4.12.0",
+    "ng-zorro-antd": "^14.1.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

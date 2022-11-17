@@ -1,3 +1,4 @@
+import cors from '@fastify/cors';
 import {
   LocationsListModel,
   locationsListSchema,
@@ -34,6 +35,8 @@ export async function createFastifyServer(): Promise<FastifyInstance> {
   fastify.addHook('onClose', () => {
     client.close();
   });
+
+  fastify.register(cors);
 
   fastify.get(
     '/products',
