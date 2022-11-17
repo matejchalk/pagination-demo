@@ -17,7 +17,7 @@ export type ReviewModel = Static<typeof reviewSchema>;
 export const reviewsListSchema = Type.Object({
   edges: Type.Array(
     Type.Object({
-      node: Type.Object(reviewSchema),
+      node: reviewSchema,
       cursor: Type.String(),
     })
   ),

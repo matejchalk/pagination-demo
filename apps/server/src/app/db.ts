@@ -34,3 +34,22 @@ export type LocationDocument = mongodb.WithId<{
   };
   price: number;
 }>;
+
+export async function dbSetup(): Promise<{
+  client: mongodb.MongoClient;
+  db: mongodb.Db;
+}> {
+  const mongoUri = process.env['MONGODB_URI'];
+  if (!mongoUri) {
+    throw new Error('Missing MONGODB_URI environment variable');
+  }
+
+  const mongoClient = new mongodb.MongoClient(mongoUri);
+  const client = await mongoClient.connect();
+  const db = client.db('eshopdb');
+
+  return {
+    client,
+    db,
+  };
+}

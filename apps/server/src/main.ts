@@ -1,5 +1,5 @@
 import { createFastifyServer, runFastifyServer } from './app/server';
 
-const server = createFastifyServer();
-
-runFastifyServer(server);
+createFastifyServer().then((server) => {
+  runFastifyServer(server);
+});

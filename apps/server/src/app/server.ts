@@ -17,9 +17,23 @@ import {
   reviewsQuerySchema,
 } from '@pagination-demo/models';
 import Fastify, { FastifyInstance, FastifyRequest } from 'fastify';
+import * as mongodb from 'mongodb';
+import {
+  Collection,
+  dbSetup,
+  LocationDocument,
+  ProductDocument,
+  ReviewDocument,
+} from './db';
 
-export function createFastifyServer(): FastifyInstance {
+export async function createFastifyServer(): Promise<FastifyInstance> {
+  const { db, client } = await dbSetup();
+
   const fastify: FastifyInstance = Fastify({ logger: true });
+
+  fastify.addHook('onClose', () => {
+    client.close();
+  });
 
   fastify.get(
     '/products',
@@ -32,13 +46,32 @@ export function createFastifyServer(): FastifyInstance {
     async (
       req: FastifyRequest<{ Querystring: ProductsQueryParams }>
     ): Promise<ProductsListModel> => {
+      const {
+        page = 1,
+        pageSize = 50,
+        orderBy = ProductOrderField.Rating,
+        orderDir = OrderDir.Desc,
+      } = req.query;
+
+      const collection = db.collection<ProductDocument>(Collection.Products);
+
+      const [docs, total] = await Promise.all([
+        collection
+          .find()
+          .sort({ [orderBy]: orderDir })
+          .skip((page - 1) * pageSize)
+          .limit(pageSize)
+          .toArray(),
+        collection.estimatedDocumentCount(),
+      ]);
+
       return {
-        items: [],
-        total: 0,
-        page: 1,
-        pageSize: 50,
-        orderBy: ProductOrderField.Rating,
-        orderDir: OrderDir.Desc,
+        items: docs.map((doc) => ({ ...doc, id: doc._id.toString() })),
+        total,
+        page,
+        pageSize,
+        orderBy,
+        orderDir,
       };
     }
   );
@@ -58,10 +91,24 @@ export function createFastifyServer(): FastifyInstance {
         Querystring: ReviewsQueryParams;
       }>
     ): Promise<ReviewsListModel> => {
+      const { first = 50, after } = req.query;
+
+      const collection = db.collection<ReviewDocument>(Collection.Reviews);
+
+      const docs = await collection
+        .find(after ? { dateTime: { $lt: after } } : {})
+        .sort({ dateTime: 'desc' })
+        .limit(first + 1)
+        .toArray();
+
       return {
-        edges: [],
+        edges: docs.slice(0, first).map((doc) => ({
+          node: { ...doc, id: doc._id.toString() },
+          cursor: doc.dateTime,
+        })),
         pageInfo: {
-          hasNextPage: false,
+          hasNextPage: docs.length === first + 1,
+          endCursor: docs[Math.min(docs.length, first) - 1]?.dateTime,
         },
       };
     }
@@ -78,10 +125,24 @@ export function createFastifyServer(): FastifyInstance {
     async (
       req: FastifyRequest<{ Querystring: LocationsQueryParams }>
     ): Promise<LocationsListModel> => {
+      const { first = 50, after } = req.query;
+
+      const collection = db.collection<LocationDocument>(Collection.Locations);
+
+      const docs = await collection
+        .find(after ? { _id: { $lt: new mongodb.ObjectId(after) } } : {})
+        .sort({ _id: 'asc' })
+        .limit(first + 1)
+        .toArray();
+
       return {
-        edges: [],
+        edges: docs.slice(0, first).map((doc) => ({
+          node: { ...doc, id: doc._id.toString() },
+          cursor: doc._id.toString(),
+        })),
         pageInfo: {
-          hasNextPage: false,
+          hasNextPage: docs.length === first + 1,
+          endCursor: docs[Math.min(docs.length, first) - 1]?._id.toString(),
         },
       };
     }

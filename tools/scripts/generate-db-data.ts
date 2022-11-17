@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import * as mongodb from 'mongodb';
 import {
   Collection,
-  DB_NAME,
+  dbSetup,
   LocationDocument,
   ProductDocument,
   ReviewDocument,
@@ -13,14 +13,7 @@ require('dotenv').config();
 generateDatabaseData();
 
 async function generateDatabaseData(): Promise<void> {
-  const uri = process.env['MONGODB_URI'];
-  if (!uri) {
-    throw new Error('Missing MONGODB_URI environment variable');
-  }
-
-  const mongoClient = new mongodb.MongoClient(uri);
-  const client = await mongoClient.connect();
-  const db = client.db(DB_NAME);
+  const { db, client } = await dbSetup();
   console.info('Opened MongoDB connection');
 
   const productsCollection = db.collection<mongodb.WithoutId<ProductDocument>>(
@@ -51,7 +44,7 @@ async function generateDatabaseData(): Promise<void> {
     `Inserted ${locations.length} documents into locations collection`
   );
 
-  await mongoClient.close();
+  await client.close();
   console.info('Closed MongoDB connection');
 }
 
