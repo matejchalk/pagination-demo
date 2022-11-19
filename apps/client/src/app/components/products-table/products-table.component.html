@@ -33,17 +33,28 @@
   <tbody>
     <tr *ngFor="let product of productsTable.data">
       <td>
-        <img
-          [src]="product.imageUrl + '?id=' + product.id"
-          height="72"
-          width="96"
-        />
+        <img nz-image [nzSrc]="product.imageUrl" height="72" width="96" />
         {{ product.name }}
       </td>
       <td nzAlign="right">{{ product.price | currency }}</td>
-      <td nzAlign="center">{{ product.rating }}</td>
       <td>
-        <button nz-button [nzType]="'primary'">See reviews</button>
+        <div class="rating">
+          <star-rating
+            [starType]="'svg'"
+            [rating]="product.rating ?? 0"
+            [disabled]="true"
+          ></star-rating>
+          {{ product.rating | number: '1.2' }}
+        </div>
+      </td>
+      <td>
+        <a
+          nz-button
+          [nzType]="'primary'"
+          [routerLink]="['/product', product.id]"
+        >
+          See reviews
+        </a>
       </td>
     </tr>
   </tbody>

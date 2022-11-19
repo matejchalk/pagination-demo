@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
+  ProductModel,
+  ProductPathParams,
   ProductsListModel,
   ProductsQueryParams,
 } from '@pagination-demo/models';
@@ -17,5 +19,11 @@ export class ProductsService {
     return this.http.get<ProductsListModel>(`${environment.apiUrl}/products`, {
       params: query,
     });
+  }
+
+  getProduct(params: ProductPathParams): Observable<ProductModel> {
+    return this.http.get<ProductModel>(
+      `${environment.apiUrl}/products/${params.productId}`
+    );
   }
 }

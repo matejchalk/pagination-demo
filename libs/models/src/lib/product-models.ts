@@ -37,3 +37,8 @@ export const productsListSchema = Type.Object({
   orderDir: Type.Enum(OrderDir),
 });
 export type ProductsListModel = Static<typeof productsListSchema>;
+
+export const productPathSchema = Type.Object({
+  productId: Type.String(),
+});
+export type ProductPathParams = Static<typeof productPathSchema>;

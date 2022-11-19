@@ -1,0 +1,7 @@
+nz-skeleton {
+  padding: 16px 0;
+}
+
+::ng-deep nz-spin[ng-reflect-nz-spinning='true'] {
+  margin-top: 200px;
+}

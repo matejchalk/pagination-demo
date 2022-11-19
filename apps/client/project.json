@@ -15,7 +15,15 @@
         "polyfills": "apps/client/src/polyfills.ts",
         "tsConfig": "apps/client/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/client/src/favicon.ico", "apps/client/src/assets"],
+        "assets": [
+          "apps/client/src/favicon.ico",
+          "apps/client/src/assets",
+          {
+            "glob": "**/*",
+            "input": "./node_modules/angular-star-rating/assets/images",
+            "output": "/assets/images"
+          }
+        ],
         "styles": ["apps/client/src/styles.scss"],
         "scripts": []
       },

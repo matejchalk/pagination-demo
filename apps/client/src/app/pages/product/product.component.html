@@ -1,0 +1,21 @@
+<ng-container *ngIf="product$ | async as product; else loading">
+  <nz-page-header
+    (nzBack)="handleBack()"
+    nzBackIcon
+    [nzTitle]="'Reviews for ' + product.name"
+    [nzSubtitle]="
+      'Rating (avg): ' +
+      (product.rating ?? 'N/A') +
+      ', price: ' +
+      (product.price | currency)
+    "
+  ></nz-page-header>
+
+  <pagination-demo-reviews-infinite-scroll></pagination-demo-reviews-infinite-scroll>
+</ng-container>
+
+<ng-template #loading>
+  <div class="page-loading">
+    <nz-spin [nzSize]="'large'"></nz-spin>
+  </div>
+</ng-template>

@@ -4,7 +4,7 @@ img {
 }
 
 td:nth-child(1) {
-  width: 60%;
+  width: 55%;
 }
 
 td:nth-child(2) {
@@ -12,9 +12,15 @@ td:nth-child(2) {
 }
 
 td:nth-child(3) {
-  width: 10%;
+  width: 15%;
 }
 
 td:nth-child(4) {
   width: 15%;
+}
+
+.rating {
+  display: flex;
+  gap: 4px;
+  align-items: center;
 }

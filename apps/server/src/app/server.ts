@@ -5,15 +5,17 @@ import {
   LocationsQueryParams,
   locationsQuerySchema,
   OrderDir,
+  ProductModel,
   ProductOrderField,
+  ProductPathParams,
+  productPathSchema,
+  productSchema,
   ProductsListModel,
   productsListSchema,
   ProductsQueryParams,
   productsQuerySchema,
   ReviewsListModel,
   reviewsListSchema,
-  ReviewsPathParams,
-  reviewsPathSchema,
   ReviewsQueryParams,
   reviewsQuerySchema,
 } from '@pagination-demo/models';
@@ -80,17 +82,45 @@ export async function createFastifyServer(): Promise<FastifyInstance> {
   );
 
   fastify.get(
+    '/products/:productId',
+    {
+      schema: {
+        params: productPathSchema,
+        response: { 200: productSchema },
+      },
+    },
+    async (
+      req: FastifyRequest<{ Params: ProductPathParams }>,
+      reply
+    ): Promise<ProductModel> => {
+      const { productId } = req.params;
+
+      const collection = db.collection<ProductDocument>(Collection.Products);
+
+      const doc = await collection.findOne({
+        _id: new mongodb.ObjectId(productId),
+      });
+
+      if (doc == null) {
+        return reply.code(404).send({ message: 'Not found' });
+      }
+
+      return { ...doc, id: doc._id.toString() };
+    }
+  );
+
+  fastify.get(
     '/products/:productId/reviews',
     {
       schema: {
-        params: reviewsPathSchema,
+        params: productPathSchema,
         querystring: reviewsQuerySchema,
         response: { 200: reviewsListSchema },
       },
     },
     async (
       req: FastifyRequest<{
-        Params: ReviewsPathParams;
+        Params: ProductPathParams;
         Querystring: ReviewsQueryParams;
       }>
     ): Promise<ReviewsListModel> => {

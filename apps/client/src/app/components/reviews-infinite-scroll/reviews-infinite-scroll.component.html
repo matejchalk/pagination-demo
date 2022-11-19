@@ -1,1 +1,41 @@
-<p>reviews-infinite-scroll works!</p>
+<nz-list
+  infinite-scroll
+  (scrolled)="handleScroll()"
+  [nzLoading]="loadingInitial$ | async"
+>
+  <nz-list-item
+    *ngFor="let review of reviews$ | async; trackBy: trackByReviewId"
+  >
+    <nz-comment
+      [nzAuthor]="review.author?.name ?? 'Anonymous user'"
+      [nzDatetime]="(review.dateTime | duration) + ' ago'"
+    >
+      <nz-avatar
+        nz-comment-avatar
+        nzIcon="user"
+        [nzSrc]="review.author?.avatarUrl"
+      ></nz-avatar>
+
+      <nz-comment-content>
+        {{ review.text }}
+      </nz-comment-content>
+
+      <nz-comment-action>
+        <star-rating
+          [starType]="'svg'"
+          [rating]="review.rating"
+          [disabled]="true"
+        ></star-rating>
+      </nz-comment-action>
+    </nz-comment>
+  </nz-list-item>
+
+  <nz-list-item *ngFor="let _ of skeletons$ | async">
+    <nz-skeleton
+      [nzAvatar]="true"
+      [nzActive]="true"
+      [nzTitle]="true"
+      [nzLoading]="true"
+    ></nz-skeleton>
+  </nz-list-item>
+</nz-list>
