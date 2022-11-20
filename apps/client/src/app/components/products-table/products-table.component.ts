@@ -16,7 +16,7 @@ import { ProductsService } from '../../services/products.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductsTableComponent {
-  readonly defaultPageSize = 10;
+  readonly defaultPageSize = 7;
 
   readonly loading$ = new BehaviorSubject(false);
 

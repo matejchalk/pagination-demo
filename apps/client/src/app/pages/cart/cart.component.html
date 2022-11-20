@@ -1,0 +1,33 @@
+<nz-page-header (nzBack)="handleBack()" nzBackIcon nzTitle="Shopping cart">
+  <nz-page-header-extra>
+    <a nz-button nzType="primary" [disabled]="isLocationNotSelected$ | async">
+      <span nz-icon nzType="credit-card"></span>
+      Proceed to checkout
+    </a>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<ng-container *ngIf="product$ | async as product">
+  <nz-card>
+    <nz-card-meta
+      [nzTitle]="product.name"
+      [nzDescription]="'Price: ' + (product.price | currency)"
+      [nzAvatar]="avatarTemplate"
+    ></nz-card-meta>
+    <ng-template #avatarTemplate>
+      <img nz-image [nzSrc]="product.imageUrl" height="54" width="72" />
+    </ng-template>
+  </nz-card>
+
+  <div class="price-wrapper">
+    <nz-statistic
+      [nzValue]="(product.price | currency) ?? ''"
+      [nzTitle]="'Total price'"
+    ></nz-statistic>
+  </div>
+</ng-container>
+
+<pagination-demo-locations-virtual-scroll
+  *ngIf="isLocationNotSelected$ | async"
+  (selectLocation)="handleSelectLocation($event)"
+></pagination-demo-locations-virtual-scroll>

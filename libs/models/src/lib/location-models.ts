@@ -23,11 +23,13 @@ export const locationsListSchema = Type.Object({
     hasNextPage: Type.Boolean(),
     endCursor: Type.Optional(Type.String()),
   }),
+  total: Type.Optional(Type.Integer()),
 });
 export type LocationsListModel = Static<typeof locationsListSchema>;
 
 export const locationsQuerySchema = Type.Object({
   first: Type.Optional(Type.Integer({ minimum: 1, maximum: 1000 })),
   after: Type.Optional(Type.String()),
+  includeTotal: Type.Optional(Type.Boolean()),
 });
 export type LocationsQueryParams = Static<typeof locationsQuerySchema>;

@@ -9,7 +9,19 @@
       ', price: ' +
       (product.price | currency)
     "
-  ></nz-page-header>
+  >
+    <nz-page-header-extra>
+      <a
+        nz-button
+        nzType="primary"
+        [routerLink]="['/cart']"
+        [queryParams]="{ productId: product.id }"
+      >
+        <span nz-icon nzType="shopping-cart"></span>
+        Add to cart
+      </a>
+    </nz-page-header-extra>
+  </nz-page-header>
 
   <pagination-demo-reviews-infinite-scroll></pagination-demo-reviews-infinite-scroll>
 </ng-container>

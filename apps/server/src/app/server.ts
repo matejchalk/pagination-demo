@@ -158,12 +158,12 @@ export async function createFastifyServer(): Promise<FastifyInstance> {
     async (
       req: FastifyRequest<{ Querystring: LocationsQueryParams }>
     ): Promise<LocationsListModel> => {
-      const { first = 50, after } = req.query;
+      const { first = 50, after, includeTotal } = req.query;
 
       const collection = db.collection<LocationDocument>(Collection.Locations);
 
       const docs = await collection
-        .find(after ? { _id: { $lt: new mongodb.ObjectId(after) } } : {})
+        .find(after ? { _id: { $gt: new mongodb.ObjectId(after) } } : {})
         .sort({ _id: 'asc' })
         .limit(first + 1)
         .toArray();
@@ -177,6 +177,9 @@ export async function createFastifyServer(): Promise<FastifyInstance> {
           hasNextPage: docs.length === first + 1,
           endCursor: docs[Math.min(docs.length, first) - 1]?._id.toString(),
         },
+        ...(includeTotal && {
+          total: await collection.estimatedDocumentCount(),
+        }),
       };
     }
   );

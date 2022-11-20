@@ -1,1 +1,37 @@
-<p>locations-virtual-scroll works!</p>
+<h3 nz-typography>Select a pick-up location</h3>
+
+<cdk-virtual-scroll-viewport [itemSize]="73">
+  <nz-list>
+    <nz-list-item *cdkVirtualFor="let location of locationsDataSource">
+      <ng-container *ngIf="location; else skeleton">
+        <nz-list-item-meta
+          [nzTitle]="location.name"
+          [nzDescription]="location.address"
+        ></nz-list-item-meta>
+        <ul nz-list-item-actions>
+          <nz-list-item-action>
+            {{ location.delivery | deliveryDate }}
+          </nz-list-item-action>
+          <nz-list-item-action>
+            <button
+              nz-button
+              nzType="primary"
+              (click)="handleSelect(location.id)"
+            >
+              {{ location.price | currency }}
+            </button>
+          </nz-list-item-action>
+        </ul>
+      </ng-container>
+
+      <ng-template #skeleton>
+        <nz-skeleton
+          [nzAvatar]="false"
+          [nzActive]="true"
+          [nzTitle]="false"
+          [nzLoading]="true"
+        ></nz-skeleton>
+      </ng-template>
+    </nz-list-item>
+  </nz-list>
+</cdk-virtual-scroll-viewport>
