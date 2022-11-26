@@ -5,8 +5,8 @@ import {
   EventEmitter,
   Output,
 } from '@angular/core';
-import { LocationModel, LocationsListModel } from '@pagination-demo/models';
-import { BehaviorSubject, map, Observable, Subscription } from 'rxjs';
+import { LocationModel } from '@pagination-demo/models';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { LocationsService } from '../../services/locations.service';
 
 const PAGE_SIZE = 50;
@@ -33,12 +33,8 @@ class LocationsDataSource extends DataSource<LocationModel | undefined> {
   private readonly dataStream$ = new BehaviorSubject<
     (LocationModel | undefined)[]
   >([]);
-  private readonly lastPageInfo$ = new BehaviorSubject<
-    LocationsListModel['pageInfo'] | null
-  >(null);
-  private readonly total$ = new BehaviorSubject(0);
 
-  private readonly fetchedCursors = new Set<string>();
+  private readonly fetchedPages = new Set<number>();
 
   private readonly subscription = new Subscription();
 
@@ -49,55 +45,45 @@ class LocationsDataSource extends DataSource<LocationModel | undefined> {
   connect(
     collectionViewer: CollectionViewer
   ): Observable<(LocationModel | undefined)[]> {
-    this.fetchPage();
+    this.fetchPage(1);
 
     this.subscription.add(
       collectionViewer.viewChange.subscribe((range) => {
-        if (
-          range.end >= this.dataStream$.value.length &&
-          this.lastPageInfo$.value?.hasNextPage
-        ) {
-          this.fetchPage(this.lastPageInfo$.value.endCursor);
-        }
+        this.fetchPage(Math.floor((range.end - 1) / PAGE_SIZE) + 1);
       })
     );
 
-    return this.dataStream$.pipe(
-      map((locations) =>
-        this.total$.value
-          ? Array.from({ length: this.total$.value }).map(
-              (_, i) => locations[i]
-            )
-          : locations
-      )
-    );
+    return this.dataStream$;
   }
 
   disconnect(): void {
     this.subscription.unsubscribe();
   }
 
-  private fetchPage(cursor?: string): void {
-    if (cursor) {
-      if (this.fetchedCursors.has(cursor)) {
-        return;
-      }
-      this.fetchedCursors.add(cursor);
+  private fetchPage(page: number): void {
+    if (this.fetchedPages.has(page)) {
+      return;
     }
+    this.fetchedPages.add(page);
 
     this.locationsService
       .getLocations({
-        first: PAGE_SIZE,
-        ...(cursor ? { after: cursor } : { includeTotal: true }),
+        page,
+        pageSize: PAGE_SIZE,
+        ...(page === 1 && { includeTotal: true }),
       })
       .subscribe((data) => {
         if (data.total) {
-          this.total$.next(data.total);
+          this.dataStream$.next(
+            Array.from({ length: data.total }).map(
+              (_, i) => this.dataStream$.value[i]
+            )
+          );
         }
-        this.lastPageInfo$.next(data.pageInfo);
         this.dataStream$.next([
-          ...this.dataStream$.value,
-          ...data.edges.map(({ node }) => node),
+          ...this.dataStream$.value.slice(0, (page - 1) * PAGE_SIZE),
+          ...data.items,
+          ...this.dataStream$.value.slice(page * PAGE_SIZE),
         ]);
       });
   }

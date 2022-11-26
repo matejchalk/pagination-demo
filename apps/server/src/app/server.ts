@@ -158,25 +158,20 @@ export async function createFastifyServer(): Promise<FastifyInstance> {
     async (
       req: FastifyRequest<{ Querystring: LocationsQueryParams }>
     ): Promise<LocationsListModel> => {
-      const { first = 50, after, includeTotal } = req.query;
+      const { page = 1, pageSize = 50, includeTotal } = req.query;
 
       const collection = db.collection<LocationDocument>(Collection.Locations);
 
       const docs = await collection
-        .find(after ? { _id: { $gt: new mongodb.ObjectId(after) } } : {})
-        .sort({ _id: 'asc' })
-        .limit(first + 1)
+        .find()
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
         .toArray();
 
       return {
-        edges: docs.slice(0, first).map((doc) => ({
-          node: { ...doc, id: doc._id.toString() },
-          cursor: doc._id.toString(),
-        })),
-        pageInfo: {
-          hasNextPage: docs.length === first + 1,
-          endCursor: docs[Math.min(docs.length, first) - 1]?._id.toString(),
-        },
+        items: docs.map((doc) => ({ ...doc, id: doc._id.toString() })),
+        page,
+        pageSize,
         ...(includeTotal && {
           total: await collection.estimatedDocumentCount(),
         }),

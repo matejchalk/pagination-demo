@@ -13,23 +13,16 @@ export const locationSchema = Type.Object({
 export type LocationModel = Static<typeof locationSchema>;
 
 export const locationsListSchema = Type.Object({
-  edges: Type.Array(
-    Type.Object({
-      node: locationSchema,
-      cursor: Type.String(),
-    })
-  ),
-  pageInfo: Type.Object({
-    hasNextPage: Type.Boolean(),
-    endCursor: Type.Optional(Type.String()),
-  }),
+  items: Type.Array(locationSchema),
+  page: Type.Integer(),
+  pageSize: Type.Integer(),
   total: Type.Optional(Type.Integer()),
 });
 export type LocationsListModel = Static<typeof locationsListSchema>;
 
 export const locationsQuerySchema = Type.Object({
-  first: Type.Optional(Type.Integer({ minimum: 1, maximum: 1000 })),
-  after: Type.Optional(Type.String()),
+  page: Type.Optional(Type.Integer({ minimum: 1 })),
+  pageSize: Type.Optional(Type.Integer({ minimum: 1, maximum: 1000 })),
   includeTotal: Type.Optional(Type.Boolean()),
 });
 export type LocationsQueryParams = Static<typeof locationsQuerySchema>;
