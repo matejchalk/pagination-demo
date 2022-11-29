@@ -9,11 +9,13 @@
     "build": "nx build",
     "test": "nx test",
     "dev": "node dev.js",
-    "dev:client": "nx serve client",
-    "dev:server": "nx serve server",
-    "dev:db:start": "docker run -d --rm -p 27017:27017 --name mongo-test mongo:latest",
-    "dev:db:stop": "docker stop mongo-test",
-    "generate-db-data": "ts-node tools/scripts/generate-db-data.ts"
+    "client": "nx serve client",
+    "server": "nx serve server",
+    "db:start": "docker run -d --rm -p 27017:27017 --name mongo-test mongo:latest",
+    "db:stop": "docker stop mongo-test",
+    "db:fill": "ts-node tools/scripts/generate-db-data.ts",
+    "db:indexes:create": "ts-node tools/scripts/create-indexes.ts",
+    "db:indexes:drop": "ts-node tools/scripts/drop-indexes.ts"
   },
   "private": true,
   "dependencies": {

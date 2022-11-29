@@ -26,5 +26,17 @@ npm run dev
 To set desired amount of fake data in database:
 
 ```sh
-npm run generate-db-data
+npm run db:fill
+```
+
+To test out performance without indexes:
+
+```sh
+npm run db:indexes:drop
+```
+
+To create indexes again:
+
+```sh
+npm run db:indexes:create
 ```

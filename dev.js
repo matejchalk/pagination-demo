@@ -6,7 +6,7 @@ concurrently(
     {
       name: 'server',
       command:
-        'docker run -d --rm -p 27017:27017 --name mongo-test mongo:latest && npx nx serve server',
+        'docker run -d --rm -p 27017:27017 --name mongo-test mongo:latest && ts-node tools/scripts/create-indexes.ts && npx nx serve server',
     },
     {
       name: 'client',
