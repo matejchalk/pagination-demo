@@ -22,6 +22,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { AppComponent } from './app.component';
 import { LocationsVirtualScrollComponent } from './components/locations-virtual-scroll/locations-virtual-scroll.component';
@@ -32,7 +33,6 @@ import { ProductComponent } from './pages/product/product.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { DeliveryDatePipe } from './pipes/delivery-date.pipe';
 import { DurationPipe } from './pipes/duration.pipe';
-import { NzTypographyModule } from 'ng-zorro-antd/typography';
 
 @NgModule({
   declarations: [
@@ -49,9 +49,21 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      { path: 'products', component: ProductsComponent },
-      { path: 'product/:productId', component: ProductComponent },
-      { path: 'cart', component: CartComponent },
+      {
+        path: 'products',
+        title: 'Products',
+        component: ProductsComponent,
+      },
+      {
+        path: 'product/:productId',
+        title: 'Reviews',
+        component: ProductComponent,
+      },
+      {
+        path: 'cart',
+        title: 'Locations',
+        component: CartComponent,
+      },
       { path: '**', redirectTo: '/products' },
     ]),
     HttpClientModule,
